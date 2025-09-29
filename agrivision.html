@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Smart Pesticide Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 240px;
+      background: #2c3e50;
+      color: white;
+      padding-top: 20px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      background: none;
+      color: white;
+      text-align: left;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .sidebar button:hover {
+      background: #34495e;
+    }
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .page {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .btn {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      width: 100%;
+      max-width: 280px;
+      background: #3498db;
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      font-size: 15px;
+    }
+    .btn:hover { background: #2980b9; }
+    .status {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f4f4f4;
+      font-weight: bold;
+    }
+    /* Header with language selector */
+    header {
+      background: #1abc9c;
+      padding: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    select {
+      padding: 5px;
+      font-size: 14px;
+    }
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        z-index: 1000;
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .hamburger {
+        display: inline-block;
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+    }
+    @media (min-width: 769px) {
+      .hamburger { display: none; }
+    }
+    .page {
+  display: none;
+}
+.page.active {
+  display: block;
+}
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+
+    <button onclick="showPage('home')">🏠 <span data-key="home"></span></button>
+    <button onclick="showPage('systemstatusMenu')">📊 <span data-key="systemstatus"></span></button>
+    <button onclick="showPage('mlMenu')">🤖 <span data-key="ml"></span></button>
+    <button onclick="showPage('controlMenu')">⚙️ <span data-key="control"></span></button>
+    <button onclick="showPage('reportsMenu')">📑 <span data-key="reports"></span></button>
+  </div>
+
+  <!-- Main -->
+  
+    <header>
+      <span class="hamburger" onclick="toggleSidebar()">☰</span>
+      <h3><span data-key="title"></span></h3>
+      <select id="language" onchange="changeLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="hi">हिंदी</option>
+        <option value="te">తెలుగు</option>
+        <option value="ta">தமிழ்</option>
+        <option value="bn">বাংলা</option>
+      </select>
+    </header>
+
+    <!-- Pages -->
+     <div class="main">
+    
+    <div id="home" class="page">
+      <h2 data-key="welcome"></h2>
+      <p data-key="selectOption"></p>
+    </div>
+
+    <div id="systemstatusMenu" class="page">
+      <h2 data-key="systemstatus"></h2>
+      <button class="btn" onclick="showPage('cloneStatus')" data-key="cloneStatus"></button>
+      <button class="btn" onclick="showPage('fieldMap')" data-key="fieldMap"></button>
+    </div>
+
+    <div id="mlMenu" class="page">
+      <h2 data-key="mlOptions"></h2>
+      <button class="btn" onclick="showPage('capturedImages')" data-key="capturedImages"></button>
+      <button class="btn" onclick="showPage('processedResults')" data-key="processedResults"></button>
+    </div>
+     <div id="capturedImages" class="page">
+  <h2 data-key="capturedImages"></h2>
+  <p data-key="capturedImagesInfo"></p>
+  <img src="img1.png" alt="Captured Image 1" width="300">
+  <img src="img2.png" alt="Captured Image 2" width="300">
+  <button class="btn" onclick="showPage('mlMenu')" data-key="back"></button>
+</div>
+
+    <div id="controlMenu" class="page">
+      <h2 data-key="controlOptions"></h2>
+      <button class="btn" onclick="showPage('manualControl')" data-key="manualControl"></button>
+      <button class="btn" onclick="showPage('autoMode')" data-key="autoMode"></button>
+    </div>
+
+    <div id="reportsMenu" class="page">
+      <h2 data-key="reportsOptions"></h2>
+      <button class="btn" onclick="showPage('summaryReport')" data-key="summaryReport"></button>
+      <button class="btn" onclick="showPage('detailedReport')" data-key="detailedReport"></button>
+    </div>
+
+    <!-- Final Sub Pages -->
+    <div id="cloneStatus" class="page">
+      <h2 data-key="cloneStatus"></h2>
+      <p data-key="cloneStatusInfo"></p>
+      <button class="btn" onclick="showPage('dashboardMenu')" data-key="back"></button>
+    </div>
+
+    <div id="fieldMap" class="page">
+      <h2 data-key="fieldMap"></h2>
+      <p data-key="fieldMapInfo"></p>
+      <button class="btn" onclick="showPage('dashboardMenu')" data-key="back"></button>
+    </div>
+
+    <div id="capturedImages" class="page">
+      <h2 data-key="capturedImages"></h2>
+      <p data-key="capturedImagesInfo"></p>
+      <button class="btn" onclick="showPage('mlMenu')" data-key="back"></button>
+    </div>
+  
+    <div id="processedResults" class="page">
+      <h2 data-key="processedResults"></h2>
+      <p data-key="processedResultsInfo"></p>
+      <img src="pri.png" alt="Processed Result 1" width="300">
+  <img src="prh.png" alt="Processed Result 2" width="300">
+
+      <button class="btn" onclick="showPage('mlMenu')" data-key="back"></button>
+    </div>
+   
+
+    <div id="manualControl" class="page">
+      <h2 data-key="manualControl"></h2>
+      <button class="btn" onclick="updateStatus('Drone is now TURNED ON ✅')" data-key="turnOn"></button>
+      <button class="btn" onclick="updateStatus('Drone is now TURNED OFF ❌')" data-key="turnOff"></button>
+      <button class="btn" onclick="updateStatus('Sprinkling started 🌱💧')" data-key="startSprinkling"></button>
+      <button class="btn" onclick="updateStatus('Sprinkling stopped ⛔')" data-key="stopSprinkling"></button>
+      <div id="droneStatus" class="status">Status: Idle</div>
+      <button class="btn" onclick="showPage('controlMenu')" data-key="back"></button>
+    </div>
+
+    <div id="autoMode" class="page">
+      <h2 data-key="autoMode"></h2>
+      <p data-key="autoModeInfo"></p>
+      <button class="btn" onclick="showPage('controlMenu')" data-key="back"></button>
+    </div>
+
+    <div id="summaryReport" class="page">
+      <h2 data-key="summaryReport"></h2>
+      <p data-key="summaryInfo"></p>
+      <button class="btn" onclick="showPage('reportsMenu')" data-key="back"></button>
+    </div>
+
+    <div id="detailedReport" class="page">
+      <h2 data-key="detailedReport"></h2>
+      <p data-key="detailedInfo"></p>
+      <button class="btn" onclick="showPage('reportsMenu')" data-key="back"></button>
+    </div>
+  </div>
+
+  <script>
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.getElementById("sidebar").classList.remove("open");
+    }
+    function updateStatus(message) {
+      document.getElementById('droneStatus').innerText = "Status: " + message;
+      alert(message);
+    }
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    // Translations
+    const translations = {
+      en: {
+        title: "Smart Pesticide Dashboard",
+        home: "Home", systemstatus: "System Status", ml: "ML Detection Output",
+        control: "Control Panel", reports: "Reports",
+        welcome: "Welcome to Smart Pesticide Dashboard",
+        selectOption: "Select an option from the menu.",
+        systemstatus: "System Status",
+        cloneStatus: "Clone Status", fieldMap: "Field Map with Infected Areas",
+        cloneStatusInfo: "Details about plant health and clone monitoring.",
+        fieldMapInfo: "Map showing infected areas detected by ML system.",
+        mlOptions: "ML Detection Options",
+        capturedImages: "Captured Images", processedResults: "Processed Results",
+        capturedImagesInfo: "Drone-captured images for ML processing.",
+        processedResultsInfo: "ML results showing infected vs healthy areas.",
+        controlOptions: "Control Options", manualControl: "Manual Control",
+        autoMode: "Automatic Mode", autoModeInfo: "System auto-sprinkles using ML + GPS.",
+        turnOn: "Turn ON Drone", turnOff: "Turn OFF Drone",
+        startSprinkling: "Start Sprinkling", stopSprinkling: "Stop Sprinkling",
+        reportsOptions: "Reports Options",
+        summaryReport: "Summary Report", detailedReport: "Detailed Analysis",
+        summaryInfo: "High-level summary of pesticide usage.",
+        detailedInfo: "Full analytics with graphs and insights.",
+        back: "⬅ Back"
+      },
+      hi: {
+        title: "स्मार्ट कीटनाशक डैशबोर्ड",
+        home: "होम", systemstatus: "सिस्टम स्थिति", ml: "एमएल पहचान परिणाम",
+        control: "कंट्रोल पैनल", reports: "रिपोर्ट्स",
+        welcome: "स्मार्ट कीटनाशक डैशबोर्ड में आपका स्वागत है",
+        selectOption: "मेनू से एक विकल्प चुनें।",
+        systemstatus: "सिस्टम स्थिति",
+        cloneStatus: "क्लोन स्थिति", fieldMap: "संक्रमित क्षेत्रों का नक्शा",
+        cloneStatusInfo: "पौधों के स्वास्थ्य और निगरानी की जानकारी।",
+        fieldMapInfo: "संक्रमित क्षेत्रों का मानचित्र।",
+        mlOptions: "एमएल पहचान विकल्प",
+        capturedImages: "कैप्चर की गई छवियाँ", processedResults: "प्रोसेस्ड परिणाम",
+        capturedImagesInfo: "ड्रोन द्वारा कैप्चर की गई छवियाँ।",
+        processedResultsInfo: "संक्रमित बनाम स्वस्थ क्षेत्रों के परिणाम।",
+        controlOptions: "कंट्रोल विकल्प", manualControl: "मैनुअल कंट्रोल",
+        autoMode: "स्वचालित मोड", autoModeInfo: "एमएल + जीपीएस द्वारा स्वचालित छिड़काव।",
+        turnOn: "ड्रोन चालू करें", turnOff: "ड्रोन बंद करें",
+        startSprinkling: "छिड़काव शुरू करें", stopSprinkling: "छिड़काव रोकें",
+        reportsOptions: "रिपोर्ट विकल्प",
+        summaryReport: "सारांश रिपोर्ट", detailedReport: "विस्तृत विश्लेषण",
+        summaryInfo: "कीटनाशक उपयोग का सारांश।",
+        detailedInfo: "पूरा विश्लेषण और ग्राफ।",
+        back: "⬅ वापस"
+      },
+      te: {
+        title: "స్మార్ట్ పెస్టిసైడ్ డాష్‌బోర్డ్",
+        home: "హోమ్", systemstatus:  "సిస్టమ్ స్థితి", ml: "ఎంఎల్ ఫలితాలు",
+        control: "కంట్రోల్ ప్యానెల్", reports: "రిపోర్ట్స్",
+        welcome: "స్మార్ట్ పెస్టిసైడ్ డాష్‌బోర్డ్ కి స్వాగతం",
+        selectOption: "మెనూ నుండి ఒక ఆప్షన్ ఎంచుకోండి.",
+        systemstatus: "సిస్టమ్ స్థితి",
+        cloneStatus: "క్లోన్ స్థితి", fieldMap: "ఇన్ఫెక్టెడ్ ఏరియాస్ మ్యాప్",
+        cloneStatusInfo: "మొక్కల ఆరోగ్యంపై వివరాలు.",
+        fieldMapInfo: "ఎంఎల్ గుర్తించిన ఇన్ఫెక్టెడ్ ఏరియాస్ మ్యాప్.",
+        mlOptions: "ఎంఎల్ ఆప్షన్స్",
+        capturedImages: "కాప్చర్ చేసిన చిత్రాలు", processedResults: "ప్రాసెస్ చేసిన ఫలితాలు",
+        capturedImagesInfo: "డ్రోన్ తీసిన చిత్రాలు.",
+        processedResultsInfo: "ఆరోగ్యవంతమైన vs ఇన్ఫెక్టెడ్ ఏరియాస్ ఫలితాలు.",
+        controlOptions: "కంట్రోల్ ఆప్షన్స్", manualControl: "మాన్యువల్ కంట్రోల్",
+        autoMode: "ఆటోమేటిక్ మోడ్", autoModeInfo: "ఎంఎల్ + జిపిఎస్ ద్వారా ఆటో స్ప్రే.",
+        turnOn: "డ్రోన్ ఆన్ చేయి", turnOff: "డ్రోన్ ఆఫ్ చేయి",
+        startSprinkling: "స్ప్రింక్లింగ్ ప్రారంభించు", stopSprinkling: "స్ప్రింక్లింగ్ ఆపు",
+        reportsOptions: "రిపోర్ట్ ఆప్షన్స్",
+        summaryReport: "సంక్షిప్త రిపోర్ట్", detailedReport: "వివరణాత్మక విశ్లేషణ",
+        summaryInfo: "పెస్టిసైడ్ వినియోగానికి సంబంధించిన సమగ్ర నివేదిక.",
+        detailedInfo: "పూర్తి విశ్లేషణ మరియు గ్రాఫ్స్.",
+        back: "⬅ వెనుక"
+      }
+    };
+
+    function changeLanguage(lang) {
+      const texts = document.querySelectorAll("[data-key]");
+      texts.forEach(el => {
+        const key = el.getAttribute("data-key");
+        if (translations[lang] && translations[lang][key]) {
+          el.innerText = translations[lang][key];
+        }
+      });
+    }
+
+    // Set default language English
+    changeLanguage("en");
+    function handleLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+ 
+    }
+  </script>
+  
+</body>
+</html>
